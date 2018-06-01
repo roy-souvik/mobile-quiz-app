@@ -1,0 +1,15 @@
+[06-Dec-2017 07:50:52 UTC] PHP Parse error:  syntax error, unexpected 'utf8_encode' (T_STRING) in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 10
+[06-Dec-2017 07:51:05 UTC] PHP Parse error:  syntax error, unexpected 'utf8_encode' (T_STRING) in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 10
+[06-Dec-2017 08:54:58 UTC] PHP Parse error:  syntax error, unexpected 'utf8_encode' (T_STRING) in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 14
+[06-Dec-2017 08:56:01 UTC] PHP Parse error:  syntax error, unexpected 'utf8_encode' (T_STRING) in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 14
+[06-Dec-2017 08:56:38 UTC] PHP Parse error:  syntax error, unexpected 'utf8_encode' (T_STRING) in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 14
+[06-Dec-2017 08:57:16 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 09:03:11 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 58
+[06-Dec-2017 09:04:29 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 09:09:03 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 09:18:30 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 09:48:11 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 10:17:30 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 10:20:47 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 10:23:44 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
+[06-Dec-2017 10:27:00 UTC] PHP Notice:  Undefined variable: qus_category in /home/ncmwing/public_html/QUIZ/php_action/create.php on line 57
