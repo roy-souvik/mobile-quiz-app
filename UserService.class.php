@@ -3,8 +3,8 @@ date_default_timezone_set('America/New_York');
 
 class UserService
 {
-    public $userBankAccountTable;
     public $connection;
+    public $userBankAccountTable;
 
     public function __construct()
     {
@@ -49,7 +49,6 @@ class UserService
           'account_number' => $this->sanitizeVariable($request['account_number']),
           'ifsc' => $this->sanitizeVariable($request['ifsc']),
           'branch_address' => $this->sanitizeVariable($request['branch_address']),
-          'updated_at' => time(),
         ];
 
         $accountId = $this->createBankAccount($data);
@@ -68,7 +67,7 @@ class UserService
 
     private function validBankDetails($request)
     {
-        return !empty($request['user_id']) &&
+        return !empty($request['user_id']) && intval($request['user_id']) > 0 &&
         !empty($request['owner_name']) &&
         !empty($request['account_number']) &&
         !empty($request['ifsc']) &&

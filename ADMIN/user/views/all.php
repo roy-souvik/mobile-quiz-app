@@ -20,7 +20,8 @@
           <th>PayTm</th>
           <th>Points</th>
           <th>Last Question</th>
-          <th>Active</th>
+          <th>Is Active</th>
+          <th>Accounts</th>
         </tr>
 
         <?php
@@ -36,6 +37,9 @@
                 <td> <?php echo $user->point; ?> </td>
                 <td> <?php echo $user->last_question; ?> </td>
                 <td> <?php echo $user->active; ?> </td>
+                <td>
+                  <a href="<?php echo $_SERVER['REQUEST_URI']; ?>user-bank-accounts.php?id=<?php echo $user->id?>">View</a> 
+                </td>
               </tr>
 
         <?php
