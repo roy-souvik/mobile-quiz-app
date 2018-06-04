@@ -4,10 +4,14 @@ require_once('UserService.class.php');
 
 $userService = new UserService();
 
-switch($_REQUEST['req']) {
+switch((string) $_REQUEST['req']) {
 
-		case 'save_bank_details':
-				$result = $userService->saveBankDetails($_REQUEST);
+		case 'check_bank_status':
+				$result = $userService->checkBankstatus($_REQUEST['user_id']);
+		break;
+
+		case 'submit_bank_info':
+				$result = $userService->submitBankInformation($_REQUEST);
 		break;
 
 		default:

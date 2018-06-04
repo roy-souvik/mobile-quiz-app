@@ -8,7 +8,7 @@ class UserService
 
     public function __construct()
     {
-        $this->userBankAccountTable = 'tbl_user_bank_accounts';
+        $this->userBankAccountTable = 'tbl_user_bank_account';
         $this->connection = $this->getDbConnection();
     }
 
@@ -27,7 +27,7 @@ class UserService
       return $connect;
     }
 
-    public function saveBankDetails($request)
+    public function submitBankInformation($request)
     {
         if (! $this->validBankDetails($request)) {
           return [
@@ -36,6 +36,16 @@ class UserService
           ];
         }
 
+        $userHasAccount = (int) $this->findBankDetailsByUserId($request['user_id'])['id'] > 0;
+
+        if ($userHasAccount) {
+          return [
+            'flag' => false,
+            'message' => 'User already has a bank account.'
+          ];
+        }
+
+        // May not be needed
         if (! $this->validAccountNumber($request['account_number'])) {
           return [
             'flag' => false,
@@ -55,6 +65,7 @@ class UserService
         if ($accountId > 0) {
           return [
             'flag' => true,
+            'message' => 'Your bank information is successfully submitted.',
             'data'=> $this->findBankDetailById($accountId)
           ];
         }
@@ -108,6 +119,44 @@ class UserService
       }
 
       return [];
+    }
+
+    public function findBankDetailsByUserId($userId)
+    {
+      $userId = intval($this->sanitizeVariable($userId));
+      $sql = "SELECT * FROM `{$this->userBankAccountTable}` WHERE `user_id` = {$userId} LIMIT 1";
+      $query = $this->connection->query($sql);
+
+      if ($query->num_rows > 0) {
+          return $query->fetch_assoc();
+      }
+
+      return [];
+    }
+
+    /**
+     * Statuses: 0 -> No Bank Info; 1 -> Un-approved; 2 -> Approved
+     * @param  [type] $userId [description]
+     * @return [type]         [description]
+     */
+    public function checkBankstatus($userId)
+    {
+        $userId = intval($this->sanitizeVariable($userId));
+        $sql = "SELECT * FROM `{$this->userBankAccountTable}` WHERE `user_id` = {$userId} LIMIT 1";
+        $query = $this->connection->query($sql);
+
+        if ($query->num_rows > 0) {
+            $bankInfo = $query->fetch_assoc();
+            return [
+              'flag' => true,
+              'status' => $bankInfo['is_approved']
+            ];
+        }
+
+        return [
+          'flag' => true,
+          'status' => 0
+        ];
     }
 
 }

@@ -8,7 +8,7 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Latest Users</h3>
+    <h3 class="panel-title">All Users</h3>
   </div>
   <div class="panel-body">
     <table class="table table-striped table-hover">
@@ -38,7 +38,7 @@
                 <td> <?php echo $user->last_question; ?> </td>
                 <td> <?php echo $user->active; ?> </td>
                 <td>
-                  <a href="<?php echo $_SERVER['REQUEST_URI']; ?>user-bank-accounts.php?id=<?php echo $user->id?>">View</a> 
+                  <a href="<?php echo $_SERVER['REQUEST_URI']; ?>user-bank-accounts.php?id=<?php echo $user->id?>">View</a>
                 </td>
               </tr>
 
