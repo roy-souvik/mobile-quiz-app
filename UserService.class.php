@@ -5,10 +5,13 @@ class UserService
 {
     public $connection;
     public $userBankAccountTable;
+    public $userBankTransactionsTable;
+    private $daysToRequestBankTransaction = 30;
 
     public function __construct()
     {
         $this->userBankAccountTable = 'tbl_user_bank_account';
+        $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
         $this->connection = $this->getDbConnection();
     }
 
@@ -169,7 +172,7 @@ class UserService
       }
 
       $data = [
-        'user_id' => $this->sanitizeVariable($request['user_id']),
+        'user_id' => intval($this->sanitizeVariable($request['user_id'])),
         'amount' => intval($this->sanitizeVariable($request['amount'])),
         'transaction_id' => $this->sanitizeVariable($request['transaction_id']),
       ];
@@ -212,6 +215,38 @@ class UserService
         'flag' => false,
         'message' => 'There is some internal error.'
       ];
+    }
+
+    /**
+     * Transaction Status Codes: 0 -> in-progress, 1 -> done
+     * @param  array $request
+     * @return array
+     */
+    public function applyForBankPayment($request)
+    {
+      if (empty($request['user_id']) || empty($request['amount'])) {
+        return [
+          'flag' => false,
+          'message' => 'Inputs are not valid.'
+        ];
+      }
+
+      $data = [
+        'user_id' => intval($this->sanitizeVariable($request['user_id'])),
+        'amount' => intval($this->sanitizeVariable($request['amount']))
+      ];
+
+      $insertSql = "INSERT INTO `{$this->userBankTransactionsTable}`
+      (`user_id`, `request_amount`)
+      VALUES ({$data['user_id']},{$data['amount']})";
+
+      return $this->connection->query($insertSql) ? $this->connection->insert_id : 0;
+
+    }
+
+    private function isApplicationRequestedInSpecificDays()
+    {
+        $this->daysToRequestBankTransaction;
     }
 
 }
