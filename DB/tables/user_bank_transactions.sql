@@ -6,4 +6,4 @@ CREATE TABLE `quiz_competition`.`tbl_user_bank_transactions` (
   `transaction_date` TIMESTAMP NULL DEFAULT NULL ,
   `transaction_amount` INT NULL DEFAULT NULL ,
   `transaction_status`  TINYINT(6) NOT NULL DEFAULT '0' ,
-  `comment` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+  `comment` TEXT NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;

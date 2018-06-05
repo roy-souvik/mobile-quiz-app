@@ -4,6 +4,11 @@ require_once('UserService.class.php');
 
 $userService = new UserService();
 
+$result = [
+	'flag' => false,
+	'message' => 'Your request is not valid.'
+];
+
 switch((string) $_REQUEST['req']) {
 
 		case 'check_bank_status':

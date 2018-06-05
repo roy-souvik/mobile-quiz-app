@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('America/New_York');
+// date_default_timezone_set('America/New_York');
 
 class UserService
 {
@@ -236,17 +236,65 @@ class UserService
         'amount' => intval($this->sanitizeVariable($request['amount']))
       ];
 
+      if (! $this->isRequestedAfterSpecificDays(intval($data['user_id']))) {
+        return [
+          'flag' => false,
+          'message' => 'You can request only once within ' . $this->daysToRequestBankTransaction . ' days.'
+        ];
+      }
+
       $insertSql = "INSERT INTO `{$this->userBankTransactionsTable}`
       (`user_id`, `request_amount`)
       VALUES ({$data['user_id']},{$data['amount']})";
 
-      return $this->connection->query($insertSql) ? $this->connection->insert_id : 0;
+      $this->connection->query($insertSql);
+
+      if ($this->connection->insert_id > 0) {
+        return [
+          'flag' => true,
+          'message' => 'Your request is accepted. The payment will be done within 15 working days. Thank you.'
+        ];
+      }
+
+      return [
+        'flag' => false,
+        'message' => 'There is some internal error.'
+      ];
 
     }
 
-    private function isApplicationRequestedInSpecificDays()
+    private function isRequestedAfterSpecificDays($userId)
     {
-        $this->daysToRequestBankTransaction;
+        $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
+        WHERE `user_id` = {$userId} AND `transaction_status` = 0
+        ORDER BY id DESC
+        LIMIT 1";
+
+        $query = $this->connection->query($sql);
+
+        if ($query->num_rows > 0) {
+            $data = $query->fetch_assoc();
+
+            return $this->getDays($data['request_date'], date('Y-m-d H:i:s')) > $this->daysToRequestBankTransaction;
+        }
+
+        return false;
+    }
+
+    public function getDays($startDate, $endDate)
+    {
+        $date1 = date_create($startDate);
+        $date2 = date_create($endDate);
+
+        // difference between two dates
+        $diff = date_diff($date1, $date2);
+
+        return $diff->format("%a");
+    }
+
+    public function convertDateToTimestamp($format = 'Y-m-d H:i:s', $date)
+    {
+        return DateTime::createFromFormat($format, $date)->getTimestamp();
     }
 
 }
