@@ -14,6 +14,10 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->submitBankInformation($_REQUEST);
 		break;
 
+		case 'verify_bank_info':
+				$result = $userService->verifyBankInformation($_REQUEST);
+		break;
+
 		default:
 		break;
 }

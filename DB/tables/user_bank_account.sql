@@ -1,1 +1,26 @@
-CREATE TABLE `quiz_competition`.`tbl_user_bank_account` ( `id` INT NOT NULL AUTO_INCREMENT , `user_id` INT NOT NULL , `owner_name` VARCHAR(191) NOT NULL , `account_number` VARCHAR(191) NOT NULL , `ifsc` VARCHAR(20) NULL DEFAULT NULL , `branch_address` TEXT NOT NULL , `is_approved` TINYINT NOT NULL DEFAULT '0' , `updated_at` TIMESTAMP NULL DEFAULT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`), INDEX `user_bank_acc__userid_index` (`user_id`) USING BTREE) ENGINE = InnoDB;
+CREATE TABLE `tbl_user_bank_account` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `owner_name` varchar(191) NOT NULL,
+  `account_number` varchar(191) NOT NULL,
+  `ifsc` varchar(20) DEFAULT NULL,
+  `branch_address` text NOT NULL,
+  `is_approved` tinyint(4) NOT NULL DEFAULT '1',
+  `verified_transaction_id` varchar(100) DEFAULT NULL,
+  `verified_amount` int(11) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for table `tbl_user_bank_account`
+--
+ALTER TABLE `tbl_user_bank_account`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_bank_acc__userid_index` (`user_id`) USING BTREE;
+
+--
+-- AUTO_INCREMENT for table `tbl_user_bank_account`
+--
+ALTER TABLE `tbl_user_bank_account`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
