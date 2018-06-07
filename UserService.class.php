@@ -170,10 +170,10 @@ class UserService
 
     /**
      * Statuses: 0 -> No Bank Info; 1 -> Un-approved; 2 -> Approved
-     * @param  [type] $userId [description]
-     * @return [type]         [description]
+     * @param  int $userId [description]
+     * @return array         [description]
      */
-    public function checkBankstatus($userId)
+    public function checkBankstatus(int $userId)
     {
         $userId = intval($this->sanitizeVariable($userId));
         $sql = "SELECT * FROM `{$this->userBankAccountTable}` WHERE `user_id` = {$userId} LIMIT 1";
@@ -183,13 +183,15 @@ class UserService
             $bankInfo = $query->fetch_assoc();
             return [
               'flag' => true,
-              'status' => $bankInfo['is_approved']
+              'status' => (int) $bankInfo['is_approved'],
+              'message' => 'Bank details found.'
             ];
         }
 
         return [
           'flag' => true,
-          'status' => 0
+          'status' => 0,
+          'message' => 'No bank details found.'
         ];
     }
 
@@ -238,7 +240,7 @@ class UserService
       if ($this->connection->query($updateAccountSql)) {
         return [
           'flag' => true,
-          'message' => 'Successfully verified your bank information. Now you may apply for payment.'
+          'message' => 'Successfully verified your bank information. You may now apply for payments.'
         ];
       }
 
