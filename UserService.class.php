@@ -8,7 +8,7 @@ class UserService
     public $userBankTransactionsTable;
     private $daysToRequestBankTransaction = 30;
 
-    public function __construct($userId = 0)
+    public function __construct(int $userId = 0)
     {
         $this->userTable = 'tbl_user';
         $this->userBankAccountTable = 'tbl_user_bank_account';

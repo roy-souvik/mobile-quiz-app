@@ -2,12 +2,7 @@
 
 require_once('UserService.class.php');
 
-$result = [
-	'flag' => false,
-	'message' => 'Your request is not valid.'
-];
-
-$userService = new UserService($_REQUEST['user_id']);
+$userService = new UserService(intval($_REQUEST['user_id']));
 
 switch((string) $_REQUEST['req']) {
 
@@ -28,6 +23,10 @@ switch((string) $_REQUEST['req']) {
 		break;
 
 		default:
+				$result = [
+					'flag' => false,
+					'message' => 'Your request is not valid.'
+				];
 		break;
 }
 
