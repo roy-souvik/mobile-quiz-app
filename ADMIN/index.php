@@ -27,7 +27,7 @@
 
           <div class="col-md-12">
             <!-- Website Overview -->
-              <?php include_once('views/layout/partials/_dashboard-overview.php'); ?>
+              <?php // include_once('views/layout/partials/_dashboard-overview.php'); ?>
 
               <!-- All Users -->
               <?php include_once('user/views/all.php'); ?>
