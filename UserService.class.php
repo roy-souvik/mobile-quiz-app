@@ -263,19 +263,23 @@ class UserService
 
     }
 
-    private function isRequestedAfterSpecificDays($userId)
+    private function isRequestedAfterSpecificDays($userId): bool
     {
         $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
-        WHERE `user_id` = {$userId} AND `transaction_status` = 0
-        ORDER BY id DESC
-        LIMIT 1";
+        WHERE `user_id` = {$userId} ORDER BY id DESC LIMIT 1";
 
         $query = $this->connection->query($sql);
+        $numRows = $query->num_rows;
 
-        if ($query->num_rows > 0) {
+        if ($numRows == 0) {
+            return true;
+        }
+
+        if ($numRows > 0) {
             $data = $query->fetch_assoc();
+            $daysDifference = $this->getDays($data['request_date'], date('Y-m-d H:i:s'));
 
-            return $this->getDays($data['request_date'], date('Y-m-d H:i:s')) > $this->daysToRequestBankTransaction;
+            return $daysDifference > $this->daysToRequestBankTransaction;
         }
 
         return false;
