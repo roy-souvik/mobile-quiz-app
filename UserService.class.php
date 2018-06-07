@@ -1,18 +1,27 @@
 <?php
-// date_default_timezone_set('America/New_York');
 
 class UserService
 {
     public $connection;
+    public $userTable;
     public $userBankAccountTable;
     public $userBankTransactionsTable;
     private $daysToRequestBankTransaction = 30;
 
-    public function __construct()
+    public function __construct($userId = 0)
     {
+        $this->userTable = 'tbl_user';
         $this->userBankAccountTable = 'tbl_user_bank_account';
         $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
         $this->connection = $this->getDbConnection();
+
+        if (!$this->isValidUser($userId)) {
+          print_r(json_encode([
+            'flag' => false,
+            'message' => 'Not a valid user!'
+          ]));
+          die();
+        }
     }
 
     public function getDbConnection()
@@ -28,6 +37,28 @@ class UserService
       }
 
       return $connect;
+    }
+
+    public function findUserById($userId)
+    {
+        $userId = intval($this->sanitizeVariable($userId));
+        $sql = "SELECT * FROM `{$this->userTable}`
+        WHERE `user_id` = {$userId} AND `user_active` = 1 AND `user_delete` = 0
+        LIMIT 1";
+        $query = $this->connection->query($sql);
+
+        if ($query->num_rows > 0) {
+            return $query->fetch_assoc();
+        }
+
+        return [];
+    }
+
+    public function isValidUser($userId): bool
+    {
+        $userdata = $this->findUserById($userId);
+
+        return !empty($userdata) && intval($userdata['user_id']) > 0;
     }
 
     public function submitBankInformation($request)

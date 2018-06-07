@@ -2,12 +2,12 @@
 
 require_once('UserService.class.php');
 
-$userService = new UserService();
-
 $result = [
 	'flag' => false,
 	'message' => 'Your request is not valid.'
 ];
+
+$userService = new UserService($_REQUEST['user_id']);
 
 switch((string) $_REQUEST['req']) {
 
