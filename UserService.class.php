@@ -26,12 +26,14 @@ class UserService
 
     public function getDbConnection()
     {
-      $localhost = "localhost";
-      $username = "root";
-      $password = "password";
+      $host = "localhost";
       $dbname = "quiz_competition";
+      // $username = "root";
+      // $password = "password";
+      $username = "ntss";
+      $password = "eerning";
 
-      $connect = new mysqli($localhost, $username, $password, $dbname);
+      $connect = new mysqli($host, $username, $password, $dbname);
       if ($connect->connect_error) {
           die("connection failed : " . $connect->connect_error);
       }
