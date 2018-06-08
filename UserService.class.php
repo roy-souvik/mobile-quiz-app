@@ -8,14 +8,14 @@ class UserService
     public $userBankTransactionsTable;
     private $daysToRequestBankTransaction = 30;
 
-    public function __construct(int $userId = 0)
+    public function __construct($userId = null)
     {
         $this->userTable = 'tbl_user';
         $this->userBankAccountTable = 'tbl_user_bank_account';
         $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
         $this->connection = $this->getDbConnection();
 
-        if (!$this->isValidUser($userId)) {
+        if (is_null($user) || !$this->isValidUser($userId)) {
           print_r(json_encode([
             'flag' => false,
             'message' => 'Not a valid user!'
@@ -28,10 +28,10 @@ class UserService
     {
       $host = "localhost";
       $dbname = "quiz_competition";
-      // $username = "root";
-      // $password = "password";
-      $username = "ntss";
-      $password = "eerning";
+      $username = "root";
+      $password = "password";
+      // $username = "ntss";
+      // $password = "eerning";
 
       $connect = new mysqli($host, $username, $password, $dbname);
       if ($connect->connect_error) {
@@ -56,7 +56,7 @@ class UserService
         return [];
     }
 
-    public function isValidUser($userId): bool
+    public function isValidUser($userId)
     {
         $userdata = $this->findUserById($userId);
 
@@ -175,7 +175,7 @@ class UserService
      * @param  int $userId [description]
      * @return array         [description]
      */
-    public function checkBankstatus(int $userId)
+    public function checkBankstatus($userId)
     {
         $userId = intval($this->sanitizeVariable($userId));
         $sql = "SELECT * FROM `{$this->userBankAccountTable}` WHERE `user_id` = {$userId} LIMIT 1";
@@ -298,7 +298,7 @@ class UserService
 
     }
 
-    private function isRequestedAfterSpecificDays($userId): bool
+    private function isRequestedAfterSpecificDays($userId)
     {
         $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
         WHERE `user_id` = {$userId} ORDER BY id DESC LIMIT 1";
