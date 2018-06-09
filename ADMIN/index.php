@@ -1,3 +1,4 @@
+<?php require_once('check_user_session.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
   <?php include_once('views/layout/partials/_head.php'); ?>

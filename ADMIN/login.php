@@ -1,21 +1,18 @@
 <?php
-// Include config file
-// require_once 'config.php';
+require_once(__DIR__ . '/config.php');
 
 // Define variables and initialize with empty values
 $username = $password = "";
 $username_err = $password_err = "";
 
 // Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Check if username is empty
     $username = trim($_POST["username"]);
     if (empty($username)) {
         $username_err = 'Please enter username.';
     }
 
-    // Check if password is empty
     $password = trim($_POST['password']);
     if (empty($password)) {
         $password_err = 'Please enter your password.';
@@ -24,7 +21,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate credentials
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT username, password FROM users WHERE username = ?";
+        $sql = "SELECT username, password FROM " . TBL_ADMINS . " WHERE username = ? LIMIT 1";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
@@ -40,22 +37,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 // Check if username exists, if yes then verify password
                 if (mysqli_stmt_num_rows($stmt) == 1) {
-                    // Bind result variables
                     mysqli_stmt_bind_result($stmt, $username, $hashed_password);
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
-                            /* Password is correct, so start a new session and
-                            save the username to the session */
                             session_start();
                             $_SESSION['username'] = $username;
-                            header("location: welcome.php");
+                            header("location: index.php");
                         } else{
-                            // Display an error message if password is not valid
                             $password_err = 'The password you entered was not valid.';
                         }
                     }
                 } else {
-                    // Display an error message if username doesn't exist
                     $username_err = 'No account found with that username.';
                 }
             } else {
@@ -63,11 +55,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
 
-        // Close statement
         mysqli_stmt_close($stmt);
     }
 
-    // Close connection
     mysqli_close($link);
 }
 ?>
