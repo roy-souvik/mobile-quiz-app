@@ -2,7 +2,7 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Bank Account(s) of <strong><?php echo $userService->user->name; ?></strong> </h3>
+    <h3 class="panel-title">Bank Details</h3>
   </div>
   <div class="panel-body">
     <table class="table table-striped table-hover">

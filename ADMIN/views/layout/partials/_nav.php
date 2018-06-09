@@ -11,7 +11,8 @@
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html">Dashboard</a></li>
+        <!-- <li class="active"><a href="index.html">Dashboard</a></li> -->
+        <li><a href="index.php">Dashboard</a></li>
         <li><a href="pages.html">Pages</a></li>
         <li><a href="posts.html">Posts</a></li>
         <li><a href="users.html">Users</a></li>

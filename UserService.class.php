@@ -382,4 +382,21 @@ class UserService
       return [];
     }
 
+    public function getBankTransactions($userId = null)
+    {
+        $userId = is_null($userId) ? $this->user->id : $userId;
+
+        $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
+        WHERE `user_id` = {$userId} ORDER BY id DESC";
+
+        $query = $this->connection->query($sql);
+
+        $transactions = [];
+        while($transaction = $query->fetch_assoc()) {
+          $transactions[] = $transaction;
+        }
+
+        return $transactions;
+    }
+
 }
