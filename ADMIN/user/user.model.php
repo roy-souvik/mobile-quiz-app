@@ -14,7 +14,6 @@ class User
     public $last_question;
     public $active;
     public $delete;
-    public $bank_account_id;
 
     function __construct($data)
     {
@@ -30,7 +29,16 @@ class User
       $this->last_question = $data['user_last_question'];
       $this->active = $data['user_active'];
       $this->delete = $data['user_delete'];
-      $this->bank_account_id = $data['bank_account_id'];
+    }
+
+    public function isActive()
+    {
+        return intval($this->active) === 1;
+    }
+
+    public function isDeleted()
+    {
+        return intval($this->delete) === 0; 
     }
 
 }

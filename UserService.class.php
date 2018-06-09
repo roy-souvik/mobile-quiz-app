@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/ADMIN/user/user.model.php');
 
 class UserService
 {
@@ -7,6 +8,7 @@ class UserService
     public $userBankAccountTable;
     public $userBankTransactionsTable;
     private $daysToRequestBankTransaction = 30;
+    public $user;
 
     public function __construct($userId = null)
     {
@@ -15,12 +17,14 @@ class UserService
         $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
         $this->connection = $this->getDbConnection();
 
-        if (is_null($user) || !$this->isValidUser($userId)) {
-          print_r(json_encode([
-            'flag' => false,
-            'message' => 'Not a valid user!'
-          ]));
-          die();
+        if ($userId > 0) {
+          if (!$this->isValidUser($userId)) {
+            print_r(json_encode([
+              'flag' => false,
+              'message' => 'Not a valid user!'
+            ]));
+            die();
+          }
         }
     }
 
@@ -41,12 +45,19 @@ class UserService
       return $connect;
     }
 
+    public function setUser($userId)
+    {
+      $userData = $this->findUserById($userId);
+      if (!empty($userData)) {
+        $this->user = new User($userData);
+      }
+    }
+
     public function findUserById($userId)
     {
         $userId = intval($this->sanitizeVariable($userId));
         $sql = "SELECT * FROM `{$this->userTable}`
-        WHERE `user_id` = {$userId} AND `user_active` = 1 AND `user_delete` = 0
-        LIMIT 1";
+        WHERE `user_id` = {$userId} LIMIT 1";
         $query = $this->connection->query($sql);
 
         if ($query->num_rows > 0) {
@@ -60,7 +71,13 @@ class UserService
     {
         $userdata = $this->findUserById($userId);
 
-        return !empty($userdata) && intval($userdata['user_id']) > 0;
+        if (!empty($userdata) && intval($userdata['user_id']) > 0) {
+          $this->user = new User($userdata);
+
+          return $this->user->isActive() && $this->user->isDeleted();
+        }
+
+        return false;
     }
 
     public function submitBankInformation($request)
@@ -334,6 +351,35 @@ class UserService
     public function convertDateToTimestamp($format = 'Y-m-d H:i:s', $date)
     {
         return DateTime::createFromFormat($format, $date)->getTimestamp();
+    }
+
+    public function getAllUsers()
+    {
+      $sql = "SELECT * FROM `{$this->userTable}` WHERE 1 order by user_id DESC";
+      $query = $this->connection->query($sql);
+      $users = [];
+      while($userData = $query->fetch_assoc()) {
+        $user = new User($userData);
+        $users[] = $user;
+      }
+
+      return $users;
+    }
+
+    public function getBankDetails($userId = null)
+    {
+      $userId = is_null($userId) ? $this->user->id : $userId;
+
+      $sql = "SELECT * FROM `{$this->userBankAccountTable}`
+      WHERE user_id=" . $userId . " ORDER BY id DESC LIMIT 1";
+
+      $query = $this->connection->query($sql);
+
+      if ($query->num_rows > 0) {
+        return $query->fetch_assoc();
+      }
+
+      return [];
     }
 
 }

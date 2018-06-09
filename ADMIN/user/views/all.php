@@ -1,9 +1,9 @@
 <?php
-  require_once('../php_action/db_connect.php');
-  require_once('../ADMIN/user/user.model.php');
+  require_once('../ADMIN/config.php');
+  require_once('../UserService.class.php');
 
-  $sql = "SELECT * FROM tbl_user WHERE 1 order by user_id DESC";
-  $query = $connect->query($sql);
+  $userService = new UserService();
+  $users = $userService->getAllUsers();
 ?>
 
 <div class="panel panel-default">
@@ -21,30 +21,28 @@
           <th>Points</th>
           <th>Last Question</th>
           <th>Is Active</th>
-          <th>Accounts</th>
+          <th>Details</th>
         </tr>
 
-        <?php
-            while($userData = $query->fetch_assoc()) {
-              $user = new User($userData);
-        ?>
-              <tr>
-                <td> <?php echo $user->name; ?> </td>
-                <td> <?php echo $user->email; ?> </td>
-                <td> <?php echo $user->social_no; ?> </td>
-                <td> <?php echo $user->phone_no; ?> </td>
-                <td> <?php echo $user->paytm; ?> </td>
-                <td> <?php echo $user->point; ?> </td>
-                <td> <?php echo $user->last_question; ?> </td>
-                <td> <?php echo $user->active; ?> </td>
-                <td>
-                  <a href="<?php echo $_SERVER['REQUEST_URI']; ?>user-bank-accounts.php?id=<?php echo $user->id?>">View</a>
-                </td>
-              </tr>
+        <?php foreach ($users as $user) { ?>
+          <tr>
+            <td> <?php echo $user->name; ?> </td>
+            <td> <?php echo $user->email; ?> </td>
+            <td> <?php echo $user->social_no; ?> </td>
+            <td> <?php echo $user->phone_no; ?> </td>
+            <td> <?php echo $user->paytm; ?> </td>
+            <td> <?php echo $user->point; ?> </td>
+            <td> <?php echo $user->last_question; ?> </td>
+            <td> <?php echo $user->active; ?> </td>
+            <td>
+              <a href="user-details.php?id=<?php echo $user->id?>">View</a>
+            </td>
+          </tr>
 
         <?php
               unset($user);
             }
+          unset($userService);  
         ?>
 
       </table>

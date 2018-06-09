@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/has_user_session.php');
 require_once(__DIR__ . '/config.php');
 
 // Define variables and initialize with empty values
