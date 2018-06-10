@@ -1,10 +1,6 @@
 <?php
 date_default_timezone_set('America/New_York');
-ini_set ('display_errors', 'on');
-ini_set ('log_errors', 'on');
-ini_set ('display_startup_errors', 'on');
-ini_set ('error_reporting', E_ALL);
-mysqli_report(MYSQLI_REPORT_ALL);
+
 class QuizWebService
 {
       public $questionCategoryId;
