@@ -7,7 +7,7 @@ $userService = new UserService(intval($_REQUEST['user_id']));
 switch((string) $_REQUEST['req']) {
 
 		case 'check_bank_status':
-				$result = $userService->checkBankstatus($_REQUEST['user_id']);
+				$result = $userService->checkBankStatus($_REQUEST['user_id']);
 		break;
 
 		case 'submit_bank_info':

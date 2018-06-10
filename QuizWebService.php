@@ -50,7 +50,8 @@ switch($_REQUEST['req'])
 	break;
 
 	case "edit_profile":
-	$val=$userval->edit_profile($_REQUEST);
+	$val = ['flag' => false, 'message' => 'Use UserWebService.'];
+	// $val=$userval->edit_profile($_REQUEST);
 	break;
 
 	case "tarnsaction_details":

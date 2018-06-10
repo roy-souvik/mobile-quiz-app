@@ -194,7 +194,7 @@ class UserService
      * @param  int $userId [description]
      * @return array         [description]
      */
-    public function checkBankstatus($userId)
+    public function checkBankStatus($userId)
     {
         $userId = intval($this->sanitizeVariable($userId));
         $sql = "SELECT * FROM `{$this->userBankAccountTable}` WHERE `user_id` = {$userId} LIMIT 1";
@@ -267,7 +267,7 @@ class UserService
 
       return [
         'flag' => false,
-        'message' => 'There is some internal error.'
+        'message' => 'There is some internal error. Please try again later.'
       ];
     }
 
@@ -312,9 +312,8 @@ class UserService
 
       return [
         'flag' => false,
-        'message' => 'There is some internal error.'
+        'message' => 'There is some internal error. Please try again later.'
       ];
-
     }
 
     private function isRequestedAfterSpecificDays($userId)
@@ -434,19 +433,54 @@ class UserService
 
     public function updateProfileInfo($request)
     {
+      ini_set ('display_errors', 'on');
+      ini_set ('log_errors', 'on');
+      ini_set ('display_startup_errors', 'on');
+      ini_set ('error_reporting', E_ALL);
+      mysqli_report(MYSQLI_REPORT_ALL);
         $data['user_id'] = intval($this->sanitizeVariable($request['user_id']));
         $data['promoter_id'] = $this->sanitizeVariable($request['promoter_id']);
         $data['user_name'] = $this->sanitizeVariable($request['user_name']);
         $data['user_email'] = $this->sanitizeVariable($request['user_email']);
         $data['user_social_no'] = $this->sanitizeVariable($request['user_social_no']);
         $data['user_phone_no'] = $this->sanitizeVariable($request['user_phone_no']);
-        $data['user_paytm'] = $this->sanitizeVariable($request['user_paytm']);
-        $data['user_bank'] = $this->sanitizeVariable($request['user_bank']);
-        $data['user_bank_ac'] = $this->sanitizeVariable($request['user_bank_ac']);
-        $data['user_bank_ifsc'] = $this->sanitizeVariable($request['user_bank_ifsc']);
-        $data['user_image'] = $this->sanitizeVariable($request['user_image']);
 
+        $paytmSql = "";
+        if (!empty($request['user_paytm'])) {
+            $data['user_paytm'] = $this->sanitizeVariable($request['user_paytm']);
+            $paytmSql = " `user_paytm`= '{$data['user_paytm']}', ";
+        }
 
+        $imageSql = "";
+        if (!empty($request['user_image'])) {
+          $data['user_image'] = $this->sanitizeVariable($request['user_image']);
+          $imageSql = " `user_image`= '{$data['user_image']}', ";
+        }
+
+        $sql = "UPDATE `{$this->userTable}`
+        SET
+        `promoter_id`= '{$data['promoter_id']}',
+        `user_name`= '{$data['user_name']}',
+        `user_email`= '{$data['user_email']}',
+        `user_social_no`= '{$data['user_social_no']}', " .
+         $paytmSql . $imageSql .
+        "`user_phone_no`= '{$data['user_phone_no']}'
+         WHERE user_id = " . $data['user_id'] . " LIMIT 1";
+
+        if ($this->connection->query($sql)) {
+          $this->setUser($data['user_id']);
+
+          return [
+            'flag' => true,
+            'message' => 'Successfully Updated.',
+            'user_details' => $this->user
+          ];
+        }
+
+        return [
+          'flag' => false,
+          'message' => 'There is some internal error. Please try again later.'
+        ];
     }
 
 }
