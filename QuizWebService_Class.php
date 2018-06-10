@@ -1,8 +1,15 @@
 <?php
 date_default_timezone_set('America/New_York');
 class QuizWebService
-
 {
+      public $questionCategoryId;
+      public $videoCategoryId;
+
+      public function __construct()
+      {
+          $this->questionCategoryId = 1;
+          $this->videoCategoryId = 2;
+      }
 /*============================ DB CONNECTION ===========================*/
      function dbconnenct()
      {
@@ -90,7 +97,7 @@ function registration($req)
 
 
               if($user_data_result->num_rows > 0)
-              {              
+              {
 
 
 
@@ -301,12 +308,12 @@ function log_in($req)
 
         /*-------------------------------IMAGE (if no image appere)----------------------*/
         if(
-          isset($req['user_id']) &&         
-          isset($req['user_phone_no']) && 
-          isset($req['user_paytm']) && 
-          isset($req['user_bank']) && 
-          isset($req['user_bank_ac']) && 
-          isset($req['user_bank_ifsc']) && 
+          isset($req['user_id']) &&
+          isset($req['user_phone_no']) &&
+          isset($req['user_paytm']) &&
+          isset($req['user_bank']) &&
+          isset($req['user_bank_ac']) &&
+          isset($req['user_bank_ifsc']) &&
           isset($req['user_image'])
           )
         {
@@ -315,9 +322,9 @@ function log_in($req)
           $user_paytm = mysqli_real_escape_string($conn,trim($req['user_paytm']));
           $user_bank = mysqli_real_escape_string($conn,trim($req['user_bank']));
           $user_bank_ac = mysqli_real_escape_string($conn,trim($req['user_bank_ac']));
-          $user_bank_ifsc = mysqli_real_escape_string($conn,trim($req['user_bank_ifsc']));    
-          $user_image = base64_decode($req['user_image']);        
-          
+          $user_bank_ifsc = mysqli_real_escape_string($conn,trim($req['user_bank_ifsc']));
+          $user_image = base64_decode($req['user_image']);
+
 
           if($user_id!="" && $user_phone_no!="" && $user_paytm!="" && $user_bank!="" && $user_bank_ac!="" && $user_bank_ifsc!="" && $user_image!="")
           {
@@ -352,32 +359,32 @@ function log_in($req)
                     $post_data_row['user_bank'] = $post_data_row['user_bank'];
                     $post_data_row['user_bank_ac'] = $post_data_row['user_bank_ac'];
                     $post_data_row['user_bank_ifsc'] = $post_data_row['user_bank_ifsc'];
-                    $post_data_row['user_profile_pic']="http://www.nexttechsoftsolution.com/QUIZ/IMAGE/USER/".$post_data_row['user_profile_pic'];                   
+                    $post_data_row['user_profile_pic']="http://www.nexttechsoftsolution.com/QUIZ/IMAGE/USER/".$post_data_row['user_profile_pic'];
                     $quiz['edit_profile']["flag"]="true";
                     $quiz['edit_profile']["message"]="Successfully update user..";
                     $quiz['edit_profile']["Profile_details"]=$post_data_row;
-                              
+
                   }
                   else
                   {
 
                     $wing['edit_profile']["flag"]="false";
-                    $wing['edit_profile']["message"]="User not found..";           
+                    $wing['edit_profile']["message"]="User not found..";
                   }
               }
               else
               {
 
                 $wing['edit_profile']["flag"]="false";
-                $wing['edit_profile']["message"]="Failed to update.."; 
+                $wing['edit_profile']["message"]="Failed to update..";
 
               }
-              
+
             }
             else
             {
               $quiz['edit_profile']["flag"]="false";
-              $quiz['edit_profile']["message"]="Usre does not exist !! Try valid id..";    
+              $quiz['edit_profile']["message"]="Usre does not exist !! Try valid id..";
             }
 
           }
@@ -552,7 +559,7 @@ function answer($req)
 {
     $conn = $this->dbconnenct();
     $quiz['answer'] = array();
-  
+
         if(isset($req['user_id']) && isset($req['qus_id']) && isset($req['ans_string']) && isset($req['lang']))
         {
           $user_id    = $req['user_id'];
@@ -562,6 +569,12 @@ function answer($req)
 
           if ($user_id!="" && $qus_id!="" /*&& $ans_string!=""*/  && $lang!="")
           {
+            $scoreData = [
+              'user_id' => intval($user_id),
+              'question_id' => intval($qus_id),
+              'ans_string' => $ans_string,
+              'question_language' => $lang
+            ];
 
               if ($lang === 'en')
               {
@@ -585,6 +598,11 @@ function answer($req)
 
                           $update_user_point = "UPDATE `tbl_user` SET `user_point` = $user_point WHERE `user_id` =$user_id";
                           $update_user_point_result = $conn->query($update_user_point);
+
+                          $scoreData['answer_matched'] = 0;
+                          $scoreData['score'] = 5;
+
+                          $this->addScore($scoreData, $this->questionCategoryId);
 
                           $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
                           $updated_point_result = $conn->query($get_updated_point);
@@ -618,6 +636,11 @@ function answer($req)
 
                           $update_user_point = "UPDATE `tbl_user` SET `user_point` = $user_point WHERE `user_id` =$user_id";
                           $update_user_point_result = $conn->query($update_user_point);
+
+                          $scoreData['answer_matched'] = 1;
+                          $scoreData['score'] = 10;
+
+                          $this->addScore($scoreData, $this->questionCategoryId);
 
                           $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
                           $updated_point_result = $conn->query($get_updated_point);
@@ -665,6 +688,11 @@ function answer($req)
                           $update_user_point = "UPDATE `tbl_user` SET `user_point` = $user_point WHERE `user_id` =$user_id";
                           $update_user_point_result = $conn->query($update_user_point);
 
+                          $scoreData['answer_matched'] = 0;
+                          $scoreData['score'] = 5;
+
+                          $this->addScore($scoreData, $this->questionCategoryId);
+
                           $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
                           $updated_point_result = $conn->query($get_updated_point);
                               if ($updated_point_result->num_rows > 0)
@@ -697,6 +725,11 @@ function answer($req)
 
                           $update_user_point = "UPDATE `tbl_user` SET `user_point` = $user_point WHERE `user_id` =$user_id";
                           $update_user_point_result = $conn->query($update_user_point);
+
+                          $scoreData['answer_matched'] = 1;
+                          $scoreData['score'] = 10;
+
+                          $this->addScore($scoreData, $this->questionCategoryId);
 
                           $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
                           $updated_point_result = $conn->query($get_updated_point);
@@ -745,13 +778,13 @@ function video($req)
 	$conn = $this->dbconnenct();
 	$quiz['video'] = array();
 
-	if (isset($req['user_id']) && isset($req['type']) && isset($req['watch'])) 
+	if (isset($req['user_id']) && isset($req['type']) && isset($req['watch']))
 	{
 		$user_id = mysqli_real_escape_string($conn, trim($req['user_id']));
 		$type = mysqli_real_escape_string($conn, trim($req['type']));
 		$watch = mysqli_real_escape_string($conn, trim($req['watch']));
 
-		if ($user_id!="" && $type!="" && $watch!="") 
+		if ($user_id!="" && $type!="" && $watch!="")
 		{
 			if ($type === 'skip')
 			{
@@ -768,7 +801,7 @@ function video($req)
 					$quiz['video']['flag'] = "true";
 					$quiz['video']['message'] = "Player did not watch complete video..";
 					$quiz['video']['user']['user_id'] = $user_id;
-					$quiz['video']['user']['complete'] = 'false';					
+					$quiz['video']['user']['complete'] = 'false';
 					$quiz['video']['user']['next'] = 'false';
 
 				}
@@ -788,6 +821,12 @@ function video($req)
                           $update_user_point = "UPDATE `tbl_user` SET `user_point` = $user_point WHERE `user_id` =$user_id";
                           $update_user_point_result = $conn->query($update_user_point);
 
+                          $scoreData = [
+                            'user_id' => intval($user_id),
+                            'score' => 5
+                          ];
+                          $this->addScore($scoreData, $this->videoCategoryId);
+
                           $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
                           $updated_point_result = $conn->query($get_updated_point);
 
@@ -797,49 +836,41 @@ function video($req)
                             $updated_point = $updated_point['user_point'];
 
                             $quiz['video']['flag'] = "true";
-							$quiz['video']['message'] = "Player watch complete video..";
-							$quiz['video']['user']['user_id'] = $user_id;
-							$quiz['video']['user']['updated_point'] = $updated_point;
-							$quiz['video']['user']['next'] = 'true';
+              							$quiz['video']['message'] = "Player watch complete video..";
+              							$quiz['video']['user']['user_id'] = $user_id;
+              							$quiz['video']['user']['updated_point'] = $updated_point;
+              							$quiz['video']['user']['next'] = 'true';
                           }
-                        }					
+                        }
 				}
 
-				if($watch === 'false')
-				{				
+				if ($watch === 'false') {
+          $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
+          $updated_point_result = $conn->query($get_updated_point);
 
-                  $get_updated_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
-                  $updated_point_result = $conn->query($get_updated_point);
+          if ($updated_point_result->num_rows > 0) {
+            $updated_point = $updated_point_result->fetch_assoc();
+            $updated_point = $updated_point['user_point'];
 
-                  if ($updated_point_result->num_rows > 0)
-                  {
-                    $updated_point = $updated_point_result->fetch_assoc();
-                    $updated_point = $updated_point['user_point'];
-
-                    $quiz['video']['flag'] = "true";
-					$quiz['video']['message'] = "Player did not watch complete video..";
-					$quiz['video']['user']['user_id'] = $user_id;
-					$quiz['video']['user']['updated_point'] = $updated_point;
-					$quiz['video']['user']['next'] = 'false';
-                  }             					
+            $quiz['video']['flag'] = "true";
+  					$quiz['video']['message'] = "Player did not watch complete video..";
+  					$quiz['video']['user']['user_id'] = $user_id;
+  					$quiz['video']['user']['updated_point'] = $updated_point;
+  					$quiz['video']['user']['next'] = 'false';
+          }
 				}
 
 			}
-		}
-		else 
-		{
+		} else {
 			$quiz['video']['flag'] = "false";
 			$quiz['video']['message'] = "Parameter cannot be empty..";
 		}
-	}
-	else
-	{
+	} else {
 		$quiz['video']['flag'] = "false";
 		$quiz['video']['message'] = "Insufficient Data. USER ID, TYPE, WATCH";
 	}
 
 	return $quiz['video'];
-
 }
 
 
@@ -853,11 +884,11 @@ function point($req)
   $conn = $this->dbconnenct();
   $quiz['point'] = array();
 
-  if (isset($req['user_id'])) 
+  if (isset($req['user_id']))
   {
 
-    $user_id = mysqli_real_escape_string($conn, trim($req['user_id']));    
-    if ($user_id!="") 
+    $user_id = mysqli_real_escape_string($conn, trim($req['user_id']));
+    if ($user_id!="")
     {
 
       $get_user_point = "SELECT `user_point` FROM `tbl_user` WHERE `user_id` = $user_id";
@@ -869,7 +900,7 @@ function point($req)
           //$user_point = $user_point['user_point'];
 
           $quiz['point']['flag'] = "true";
-          $quiz['point']['message'] = "Player Points found successfully...";          
+          $quiz['point']['message'] = "Player Points found successfully...";
           $quiz['point']['user_point'] = $user_point['user_point'];
         }
 
@@ -895,10 +926,10 @@ function point($req)
 function version($req){
     $conn = $this->dbconnenct();
     $quiz['version'] = array();
-    if (isset($req['version_details'])) 
+    if (isset($req['version_details']))
     {
-        $version_details = mysqli_real_escape_string($conn, trim($req['version_details']));    
-        if ($version_details!="") 
+        $version_details = mysqli_real_escape_string($conn, trim($req['version_details']));
+        if ($version_details!="")
         {
           $get_version = "SELECT version_name FROM tbl_version";
           $version_result = $conn->query($get_version);
@@ -946,15 +977,15 @@ function withdrawal($req)
   {
       $user_id = mysqli_real_escape_string($conn, trim($req['user_id']));//GET THE USER ID.
       $type = mysqli_real_escape_string($conn, trim($req['type']));//GET THE WITHDRAL TYPE (RECHARGE or
-                                                                  //PAYTM or BANK.      
+                                                                  //PAYTM or BANK.
 
-      if ($type === 'recharge')// CHECK IF THE WITHDRAL TYPE IS 'RECHARGE' 
+      if ($type === 'recharge')// CHECK IF THE WITHDRAL TYPE IS 'RECHARGE'
       {
 
           $request_date = date('Y-m-d');//STORE THE CURRENT REQUESTED DATE BY USER
-          
+
           $request_date_formated = new DateTime($request_date);//CONVERT THE
-                                                              // '$request_date' INTO 'DATE TIME' TYPE                   
+                                                              // '$request_date' INTO 'DATE TIME' TYPE
 
           //$last_request_date = "SELECT transaction_request_date FROM tbl_transaction WHERE user_id = $user_id";//GET THE LAST WITHDRAL REQUEST DATE ASSOCIATED WITH THE USER ID.
 
@@ -963,7 +994,7 @@ function withdrawal($req)
           $last_request_date = $conn->query($last_request_date);
           if ($last_request_date->num_rows > 0)
           {
-            $last_request_date = $last_request_date->fetch_assoc();            
+            $last_request_date = $last_request_date->fetch_assoc();
             $last_request_date = $last_request_date['transaction_request_date'];
             $last_request_date = new DateTime($last_request_date);//CONVERT
                                                                 //LAST REQUEST DATE INTO DATE TYPE.
@@ -989,7 +1020,7 @@ function withdrawal($req)
               $get_phone_result = $conn->query($get_phone);
 
               if ($get_phone_result->num_rows > 0)
-              {                
+              {
                 while ($value = $get_phone_result->fetch_assoc())
                 {
                   //$get_phone = $value['user_phone_no'];
@@ -1005,27 +1036,27 @@ function withdrawal($req)
 
               /*$transaction_sql = "INSERT INTO tbl_transaction (user_id, transaction_request, transaction_request_date, transaction_action_date, transaction_request_amount, transaction_status) VALUES ('$user_id', '$type', '$request_date', 0000-00-00, '$amount', 'in-process')";//STORE SOME INFORMATION INTO 'TRANSACTION' TABLE
                                         //ASSOCIATED WITH THE
-                                        //USER.    
+                                        //USER.
               $transaction_sql = $conn->query($transaction_sql);
 
               $quiz['withdrawal']['flag'] = "true";
               $quiz['withdrawal']['message'] = "Congratulations..";*/
-             
 
-            }                      
+
+            }
           }
           else
           {
             $quiz['withdrawal']['flag'] = "false";
             $quiz['withdrawal']['message'] = "No transaction done yet by this User..";
-          }                
+          }
 
       }
-      elseif ($type === 'paytm') 
+      elseif ($type === 'paytm')
       {
         echo "paytm";
       }
-      elseif ($type === 'bank') 
+      elseif ($type === 'bank')
       {
         echo "bank";
       }
@@ -1060,7 +1091,7 @@ function recharge_withdrawal($req)
 
     if ($user_id!="" && $phone_no!="" && $phone_operator!="" && $amount!="")
     {
-          $cons_amount = "SELECT amount FROM tbl_constant WHERE type = 'recharge'";// GET THE CONSTANT/MINIMUM 
+          $cons_amount = "SELECT amount FROM tbl_constant WHERE type = 'recharge'";// GET THE CONSTANT/MINIMUM
                                                                                   //AMOUNT FOR RECHARGE.
           $cons_amount_result = $conn->query($cons_amount);
 
@@ -1095,30 +1126,30 @@ function recharge_withdrawal($req)
               else
               {
 
-                $request_date = date('Y-m-d');//STORE THE CURRENT REQUESTED DATE BY USER          
+                $request_date = date('Y-m-d');//STORE THE CURRENT REQUESTED DATE BY USER
                 $request_date_formated = new DateTime($request_date);//CONVERT THE
-                                                                    // '$request_date' INTO 'DATE TIME' TYPE                   
+                                                                    // '$request_date' INTO 'DATE TIME' TYPE
 
                 $transaction_sql = "INSERT INTO tbl_transaction (
-                user_id, 
-                transaction_request, 
-                recharge_no, 
-                recharge_operator, 
-                transaction_request_date, 
-                transaction_action_date, 
-                transaction_request_amount, 
-                transaction_status) 
+                user_id,
+                transaction_request,
+                recharge_no,
+                recharge_operator,
+                transaction_request_date,
+                transaction_action_date,
+                transaction_request_amount,
+                transaction_status)
                 VALUES (
-                '$user_id', 
-                'recharge', 
-                '$phone_no', 
-                '$phone_operator', 
-                '$request_date', 
-                0000-00-00, 
-                '$amount', 
+                '$user_id',
+                'recharge',
+                '$phone_no',
+                '$phone_operator',
+                '$request_date',
+                0000-00-00,
+                '$amount',
                 'in-process')";//STORE SOME INFORMATION INTO 'TRANSACTION' TABLE
                                 //ASSOCIATED WITH THE USER.
-                              
+
                 $transaction_sql = $conn->query($transaction_sql);
 
                 $updated_transaction_list_sql = "SELECT * FROM tbl_transaction WHERE user_id = $user_id ORDER BY transaction_id DESC";//GET THE ALL TRANSACTION REQUEST LIST ASSOCIATED WITH THE USER.
@@ -1323,4 +1354,24 @@ return $quiz['details'];
 }
 /*================================= TRANSCTION DETAILS END=============================*/
 
+  public function addScore($data, $scoreCategoryId)
+  {
+      $scoreTable = 'tbl_user_scores';
+      $connection = $this->dbconnenct();
+
+      if ($scoreCategoryId === $this->questionCategoryId) {
+        $sql = "INSERT INTO `{$scoreTable}` (
+          `user_id`, `score_category`, `question_id`, `score`, `ans_string`, `answer_matched`, `question_language`)
+           VALUES ('{$data['user_id']}', '{$scoreCategoryId}', '{$data['question_id']}', '{$data['score']}', '{$data['ans_string']}', '{$data['answer_matched']}', '{$data['question_language']}')";
+      }
+
+      if ($scoreCategoryId === $this->videoCategoryId) {
+        $sql = "INSERT INTO `{$scoreTable}` (
+          `user_id`, `score_category`, `score`)
+           VALUES ('{$data['user_id']}', '{$scoreCategoryId}', '{$data['score']}')";
+      }
+
+      return $connection->query($sql) ? $connection->insert_id : 0;
+  }
+  
 }

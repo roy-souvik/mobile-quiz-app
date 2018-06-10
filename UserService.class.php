@@ -434,7 +434,19 @@ class UserService
 
     public function updateProfileInfo($request)
     {
-      // code...
+        $data['user_id'] = intval($this->sanitizeVariable($request['user_id']));
+        $data['promoter_id'] = $this->sanitizeVariable($request['promoter_id']);
+        $data['user_name'] = $this->sanitizeVariable($request['user_name']);
+        $data['user_email'] = $this->sanitizeVariable($request['user_email']);
+        $data['user_social_no'] = $this->sanitizeVariable($request['user_social_no']);
+        $data['user_phone_no'] = $this->sanitizeVariable($request['user_phone_no']);
+        $data['user_paytm'] = $this->sanitizeVariable($request['user_paytm']);
+        $data['user_bank'] = $this->sanitizeVariable($request['user_bank']);
+        $data['user_bank_ac'] = $this->sanitizeVariable($request['user_bank_ac']);
+        $data['user_bank_ifsc'] = $this->sanitizeVariable($request['user_bank_ifsc']);
+        $data['user_image'] = $this->sanitizeVariable($request['user_image']);
+
+
     }
 
 }
