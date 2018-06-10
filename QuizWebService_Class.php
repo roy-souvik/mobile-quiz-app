@@ -1,5 +1,10 @@
 <?php
 date_default_timezone_set('America/New_York');
+ini_set ('display_errors', 'on');
+ini_set ('log_errors', 'on');
+ini_set ('display_startup_errors', 'on');
+ini_set ('error_reporting', E_ALL);
+mysqli_report(MYSQLI_REPORT_ALL);
 class QuizWebService
 {
       public $questionCategoryId;
@@ -16,8 +21,8 @@ class QuizWebService
          if($_SERVER['HTTP_HOST'] == "localhost")
          {
            $host = "localhost";
-           $user = "ntss";
-           $pass = "eerning";
+           $user = "root";
+           $pass = "password";
            $dbname = "quiz_competition";
          }else{
            $host = "localhost";
@@ -98,9 +103,6 @@ function registration($req)
 
               if($user_data_result->num_rows > 0)
               {
-
-
-
                 $registration_data_row = $user_data_result->fetch_assoc();
                 $user_id = $registration_data_row['user_id'];//STORE THE USER ID OF THE REGISTERED USER.
 
@@ -1373,5 +1375,5 @@ return $quiz['details'];
 
       return $connection->query($sql) ? $connection->insert_id : 0;
   }
-  
+
 }
