@@ -30,6 +30,10 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->getWalletStatus(intval($_REQUEST['user_id']));
 		break;
 
+		case 'payment_list':
+				$result = $userService->getPaymentList(intval($_REQUEST['user_id']));
+		break;
+
 		default:
 				$result = [
 					'flag' => false,

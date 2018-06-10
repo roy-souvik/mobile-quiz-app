@@ -495,9 +495,9 @@ class UserService
           $watchedVideo = $score['score_category'] == 2;
           $answeredCorrectly = $score['score_category'] == 1 && $score['answer_matched'] == 1;
           $answeredWrongly = $score['score_category'] == 1 && $score['answer_matched'] == 0;
-          $scoreDate = date ('Y-m-d', strtotime($score['created_at']));
+          $scoreDate = date('Y-m-d', strtotime($score['created_at']));
           $scoredToday = date('Y-m-d') == $scoreDate;
-          $scoreMonth = date ('m', strtotime($score['created_at']));
+          $scoreMonth = date('m', strtotime($score['created_at']));
           $scoredInCurrentMonth = date('m') == $scoreMonth;
           $currentScore = intval($score['score']);
 
@@ -521,10 +521,25 @@ class UserService
         }
 
         return [
+          'flag' => true,
+          'message' => 'Score Details',
           'bank_status' => intval($bankDetails['is_approved']),
           'todays_score' => $todaysScore,
           'months_score' => $monthsScore,
           'total_score' => $totalScore
+        ];
+    }
+
+    public function getPaymentList($userId)
+    {
+        $mobileTransactions = $this->getMobileTransactions();
+        $bankTransactions = $this->getBankTransactions();
+
+        return [
+          'flag' => true,
+          'message' => 'Payment History',
+          'bank_transactions' => $bankTransactions,
+          'mobile_transactions' => $mobileTransactions
         ];
     }
 
