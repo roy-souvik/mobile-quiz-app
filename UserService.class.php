@@ -419,4 +419,22 @@ class UserService
         return $transactions;
     }
 
+    public function getUsersWithBankTransactions()
+    {
+      $sql = "SELECT * FROM `{$this->userTable}` WHERE 1 order by user_id DESC";
+      $query = $this->connection->query($sql);
+      $users = [];
+      while($userData = $query->fetch_assoc()) {
+        $user = new User($userData);
+        $users[] = $user;
+      }
+
+      return $users;
+    }
+
+    public function updateProfileInfo($request)
+    {
+      // code...
+    }
+
 }

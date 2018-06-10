@@ -13,7 +13,6 @@
       <ul class="nav navbar-nav">
         <!-- <li class="active"><a href="index.html">Dashboard</a></li> -->
         <li><a href="index.php">Dashboard</a></li>
-        <li><a href="users.html">Bank Transaction Requests</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="javascript:void(0);">Welcome, <?php echo ucfirst($_SESSION['username']); ?></a></li>

@@ -22,6 +22,10 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->applyForBankPayment($_REQUEST);
 		break;
 
+		case 'edit_profile':
+				$result = $userService->editProfile($_REQUEST);
+		break;
+
 		default:
 				$result = [
 					'flag' => false,
@@ -32,3 +36,7 @@ switch((string) $_REQUEST['req']) {
 
 echo json_encode($result);
 die();
+
+/*
+req=edit_profile&user_id=23&promoter_id=promoter_1@gmail.com&user_name=Pintu%20Das&user_email=pintu.ntss@gmail.com&user_social_no=ABCPINTU123&user_phone_no=9733759225&user_paytm&user_bank&user_bank_ac&user_bank_ifsc&user_image=
+ */
