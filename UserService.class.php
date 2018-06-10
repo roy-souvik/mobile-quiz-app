@@ -7,6 +7,7 @@ class UserService
     public $userTable;
     public $userBankAccountTable;
     public $userBankTransactionsTable;
+    public $mobileTransactionsTable;
     private $daysToRequestBankTransaction = 30;
     public $user;
 
@@ -15,6 +16,7 @@ class UserService
         $this->userTable = 'tbl_user';
         $this->userBankAccountTable = 'tbl_user_bank_account';
         $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
+        $this->mobileTransactionsTable = 'tbl_transaction';
         $this->connection = $this->getDbConnection();
 
         if ($userId > 0) {
@@ -388,6 +390,24 @@ class UserService
 
         $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
         WHERE `user_id` = {$userId} ORDER BY id DESC";
+
+        $query = $this->connection->query($sql);
+
+        $transactions = [];
+        while($transaction = $query->fetch_assoc()) {
+          $transactions[] = $transaction;
+        }
+
+        return $transactions;
+    }
+
+    public function getMobileTransactions($userId = null)
+    {
+        $userId = is_null($userId) ? $this->user->id : $userId;
+
+        $sql = "SELECT * FROM `{$this->mobileTransactionsTable}`
+        WHERE `user_id` = {$userId} AND `transaction_request` = 'recharge'
+        ORDER BY transaction_id DESC";
 
         $query = $this->connection->query($sql);
 

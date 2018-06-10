@@ -16,7 +16,7 @@
         </tr>
 
         <?php
-          if (!empty($bankAccount)) {
+          if (!empty($transactions)) {
             foreach ($transactions as $transaction) {
         ?>
           <tr>

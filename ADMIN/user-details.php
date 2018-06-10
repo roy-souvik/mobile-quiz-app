@@ -39,6 +39,8 @@ $userData = $userService->setUser($user_id);
 
               <?php include_once('user/views/bank-transactions.php'); ?>
 
+              <?php include_once('user/views/mobile-recharge-transactions.php'); ?>
+
           </div>
         </div>
       </div>
