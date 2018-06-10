@@ -433,11 +433,6 @@ class UserService
 
     public function updateProfileInfo($request)
     {
-      ini_set ('display_errors', 'on');
-      ini_set ('log_errors', 'on');
-      ini_set ('display_startup_errors', 'on');
-      ini_set ('error_reporting', E_ALL);
-      mysqli_report(MYSQLI_REPORT_ALL);
         $data['user_id'] = intval($this->sanitizeVariable($request['user_id']));
         $data['promoter_id'] = $this->sanitizeVariable($request['promoter_id']);
         $data['user_name'] = $this->sanitizeVariable($request['user_name']);
@@ -480,6 +475,53 @@ class UserService
         return [
           'flag' => false,
           'message' => 'There is some internal error. Please try again later.'
+        ];
+    }
+
+    public function getWalletStatus($userId)
+    {
+        $response = [];
+        $bankDetails = $this->getBankDetails();
+
+        $getScoresSql = "SELECT * FROM `tbl_user_scores` WHERE user_id = " . $userId;
+        $query = $this->connection->query($getScoresSql);
+
+        $totalScore = 0;
+        $todaysScore = 0;
+        $monthsScore = 0;
+        while($score = $query->fetch_assoc()) {
+          $watchedVideo = $score['score_category'] == 2;
+          $answeredCorrectly = $score['score_category'] == 1 && $score['answer_matched'] == 1;
+          $answeredWrongly = $score['score_category'] == 1 && $score['answer_matched'] == 0;
+          $scoreDate = date ('Y-m-d', strtotime($score['created_at']));
+          $scoredToday = date('Y-m-d') == $scoreDate;
+          $scoreMonth = date ('m', strtotime($score['created_at']));
+          $scoredInCurrentMonth = date('m') == $scoreMonth;
+
+          if ($answeredCorrectly || $watchedVideo) {
+            $totalScore+= $score['score'];
+          }  else if ($answeredWrongly) {
+            $totalScore-= $score['score'];
+          }
+
+          if (($scoredToday && $answeredCorrectly) || ($scoredToday && $watchedVideo)) {
+            $todaysScore+= $score['score'];
+          } else if ($scoredToday && $answeredWrongly) {
+            $todaysScore-= $score['score'];
+          }
+
+          if (($scoredInCurrentMonth && $answeredCorrectly) || ($scoredInCurrentMonth && $watchedVideo)) {
+            $monthsScore+= $score['score'];
+          } else if ($scoredInCurrentMonth && $answeredWrongly) {
+            $monthsScore-= $score['score'];
+          }
+        }
+
+        return [
+          'bank_status' => intval($bankDetails['is_approved']),
+          'todays_score' => $todaysScore,
+          'months_score' => $monthsScore,
+          'total_score' => $totalScore
         ];
     }
 

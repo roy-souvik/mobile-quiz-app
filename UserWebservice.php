@@ -26,6 +26,10 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->updateProfileInfo($_REQUEST);
 		break;
 
+		case 'wallet_status':
+				$result = $userService->getWalletStatus(intval($_REQUEST['user_id']));
+		break;
+
 		default:
 				$result = [
 					'flag' => false,
