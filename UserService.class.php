@@ -8,6 +8,7 @@ class UserService
     public $userBankAccountTable;
     public $userBankTransactionsTable;
     public $mobileTransactionsTable;
+    public $userScoresTable;
     private $daysToRequestBankTransaction = 30;
     public $user;
 
@@ -17,6 +18,7 @@ class UserService
         $this->userBankAccountTable = 'tbl_user_bank_account';
         $this->userBankTransactionsTable = 'tbl_user_bank_transactions';
         $this->mobileTransactionsTable = 'tbl_transaction';
+        $this->userScoresTable = 'tbl_user_scores';
         $this->connection = $this->getDbConnection();
 
         if ($userId > 0) {
@@ -483,7 +485,7 @@ class UserService
         $response = [];
         $bankDetails = $this->getBankDetails();
 
-        $getScoresSql = "SELECT * FROM `tbl_user_scores` WHERE user_id = " . $userId;
+        $getScoresSql = "SELECT * FROM `{$this->userScoresTable}` WHERE user_id = " . $userId;
         $query = $this->connection->query($getScoresSql);
 
         $totalScore = 0;
@@ -497,23 +499,24 @@ class UserService
           $scoredToday = date('Y-m-d') == $scoreDate;
           $scoreMonth = date ('m', strtotime($score['created_at']));
           $scoredInCurrentMonth = date('m') == $scoreMonth;
+          $currentScore = intval($score['score']);
 
           if ($answeredCorrectly || $watchedVideo) {
-            $totalScore+= $score['score'];
+            $totalScore += $currentScore;
           }  else if ($answeredWrongly) {
-            $totalScore-= $score['score'];
+            $totalScore -= $currentScore;
           }
 
           if (($scoredToday && $answeredCorrectly) || ($scoredToday && $watchedVideo)) {
-            $todaysScore+= $score['score'];
+            $todaysScore += $currentScore;
           } else if ($scoredToday && $answeredWrongly) {
-            $todaysScore-= $score['score'];
+            $todaysScore -= $currentScore;
           }
 
           if (($scoredInCurrentMonth && $answeredCorrectly) || ($scoredInCurrentMonth && $watchedVideo)) {
-            $monthsScore+= $score['score'];
+            $monthsScore += $currentScore;
           } else if ($scoredInCurrentMonth && $answeredWrongly) {
-            $monthsScore-= $score['score'];
+            $monthsScore -= $currentScore;
           }
         }
 
