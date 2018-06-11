@@ -1,4 +1,5 @@
 <?php
+  die('Go to admin section to view and create questions.');
   require_once 'php_action/db_connect.php';
  ?>
 
@@ -18,7 +19,7 @@
 
 </head>
 <body>
-
+<?php /* ?>
  <form action="php_action/create.php" method="post">
    <fieldset>
      <legend>QUESTION CATEGORY</legend>
@@ -68,6 +69,6 @@
   </fieldset>
 
 </form>
-
+<?php  */ ?>
 </body>
 </html>

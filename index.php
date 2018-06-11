@@ -1,4 +1,9 @@
-<?php require_once 'php_action/db_connect.php'; ?>
+<?php
+  die('Go to admin section to view and create questions.');
+
+/*
+	require_once 'php_action/db_connect.php';
+?>
 
 <!DOCTYPE html>
 <html>
@@ -99,3 +104,4 @@
 
 </body>
 </html>
+<?php */ ?>
