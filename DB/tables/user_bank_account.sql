@@ -1,6 +1,7 @@
 CREATE TABLE `tbl_user_bank_account` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `bank_name` varchar(190) NOT NULL,
   `owner_name` varchar(191) NOT NULL,
   `account_number` varchar(191) NOT NULL,
   `ifsc` varchar(20) DEFAULT NULL,
@@ -23,4 +24,4 @@ ALTER TABLE `tbl_user_bank_account`
 -- AUTO_INCREMENT for table `tbl_user_bank_account`
 --
 ALTER TABLE `tbl_user_bank_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;

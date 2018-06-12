@@ -112,6 +112,7 @@ class UserService
 
         $data = [
           'user_id' => $this->sanitizeVariable($request['user_id']),
+          'bank_name' => $this->sanitizeVariable($request['bank_name']),
           'owner_name' => $this->sanitizeVariable($request['owner_name']),
           'account_number' => $this->sanitizeVariable($request['account_number']),
           'ifsc' => $this->sanitizeVariable($request['ifsc']),
@@ -136,6 +137,7 @@ class UserService
     private function validBankDetails($request)
     {
         return !empty($request['user_id']) && intval($request['user_id']) > 0 &&
+        !empty($request['bank_name']) &&
         !empty($request['owner_name']) &&
         !empty($request['account_number']) &&
         !empty($request['ifsc']) &&
@@ -159,8 +161,8 @@ class UserService
     private function createBankAccount($data)
     {
         $create_sql = "INSERT INTO `{$this->userBankAccountTable}` (
-        `user_id`, `owner_name`, `account_number`, `ifsc`, `branch_address`)
-        VALUES ({$data['user_id']}, '{$data['owner_name']}', '{$data['account_number']}', '{$data['ifsc']}', '{$data['branch_address']}')";
+        `user_id`, `bank_name`, `owner_name`, `account_number`, `ifsc`, `branch_address`)
+        VALUES ({$data['user_id']}, '{$data['bank_name']}', '{$data['owner_name']}', '{$data['account_number']}', '{$data['ifsc']}', '{$data['branch_address']}')";
 
         return $this->connection->query($create_sql) ? $this->connection->insert_id : 0;
     }
