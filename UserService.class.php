@@ -387,6 +387,26 @@ class UserService
       return [];
     }
 
+    public function getBankTransactionById($transactionId)
+    {
+        $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
+        WHERE id=" . $transactionId . " LIMIT 1";
+
+        $query = $this->connection->query($sql);
+
+        if ($query->num_rows > 0) {
+          return $query->fetch_assoc();
+        }
+
+        return [];
+    }
+
+
+    /**
+     * Get all bank transactions related to the user
+     * @param  [type] $userId [description]
+     * @return [type]         [description]
+     */
     public function getBankTransactions($userId = null)
     {
         $userId = is_null($userId) ? $this->user->id : $userId;
@@ -543,6 +563,41 @@ class UserService
           'bank_transactions' => $bankTransactions,
           'mobile_transactions' => $mobileTransactions
         ];
+    }
+
+    public function updateBankTransaction($request)
+    {
+      if (empty($request['transaction_date']) ||
+          empty($request['transaction_amount']) ||
+          empty($request['transaction_id']) ||
+          empty($request['transaction_status'])
+        ) {
+        return [
+          'flag' => false,
+          'message' => 'Inputs are not valid.'
+        ];
+      }
+
+      $data = [
+        'transaction_date' => $this->sanitizeVariable($request['transaction_date']),
+        'transaction_amount' => $this->sanitizeVariable($request['transaction_amount']),
+        'transaction_id' => intval($this->sanitizeVariable($request['transaction_id'])),
+        'transaction_status' => intval($this->sanitizeVariable($request['transaction_status'])),
+        'comment' => $this->sanitizeVariable($request['comment']),
+      ];
+
+      $approvedstatus = 1;
+
+      $updateTransactionSql = "UPDATE `{$this->userBankTransactionsTable}`
+      SET
+      `transaction_date`= '{$data['transaction_date']}',
+      `transaction_amount`= '{$data['transaction_amount']}',
+      `transaction_status`= '{$data['transaction_status']}',
+      `comment`= '{$data['comment']}'
+      WHERE id = " . $data['transaction_id'];
+
+      return $this->connection->query($updateTransactionSql);
+
     }
 
 }

@@ -13,6 +13,7 @@
           <th>Transaction Amount</th>
           <th>Transaction Status</th>
           <th>Comment</th>
+          <th class="text-center">Action</th>
         </tr>
 
         <?php
@@ -26,6 +27,10 @@
             <td> <?php echo $transaction['transaction_amount']; ?> </td>
             <td> <?php echo $transaction['transaction_status']; ?> </td>
             <td> <?php echo $transaction['comment']; ?> </td>
+            <td>
+              <a href="complete-bank-transaction-form.php?id=<?php echo $transaction['id']; ?>&user_id=<?php echo $transaction['user_id']; ?>" class="text-success">Complete</a> |
+              <a href="#" class="text-danger">Cancel</a>
+            </td>
           </tr>
       <?php
           }
