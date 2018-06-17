@@ -565,6 +565,11 @@ class UserService
         ];
     }
 
+    /**
+     * Update transaction details to bank transactions table
+     * @param  [type] $request
+     * @return [type]
+     */
     public function updateBankTransaction($request)
     {
       if (empty($request['transaction_date']) ||
@@ -585,8 +590,6 @@ class UserService
         'transaction_status' => intval($this->sanitizeVariable($request['transaction_status'])),
         'comment' => $this->sanitizeVariable($request['comment']),
       ];
-
-      $approvedstatus = 1;
 
       $updateTransactionSql = "UPDATE `{$this->userBankTransactionsTable}`
       SET

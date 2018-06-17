@@ -18,8 +18,6 @@ $userService->setUser($currentTransaction['user_id']);
 if (intval($currentTransaction['user_id']) !== intval($_GET['user_id'])) {
   die('No valid transactions found or the user has not done this transactions');
 }
-
-var_dump($currentTransaction);
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +30,7 @@ var_dump($currentTransaction);
     <header id="header">
       <div class="container">
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-sm-10">
             <h1>
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
               Pay money to <small><?php echo $userService->user->name; ?></small></h1>
@@ -44,45 +42,45 @@ var_dump($currentTransaction);
     <section id="main">
       <div class="container">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-sm-10">
 
-            <form class="form-horizontal" method="POST" action="/action_page.php">
+            <form class="form-horizontal" method="POST" action="complete-bank-transaction.php">
               <div class="form-group">
-                <label class="control-label col-sm-2" for="transaction_date">Transaction Date:</label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-3" for="transaction_date">Transaction Date:</label>
+                <div class="col-sm-7">
                   <input type="date" class="form-control" name="transaction_date" id="transaction_date" required>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="control-label col-sm-2" for="transaction_amount">Transaction Amount:</label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-3" for="transaction_amount">Transaction Amount:</label>
+                <div class="col-sm-7">
                   <input type="number" class="form-control" name="transaction_amount" id="transaction_amount" required>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="control-label col-sm-2" for="transaction_status">Transaction Status:</label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-3" for="transaction_status">Transaction Status:</label>
 
-                  <select name="transaction_status" id="transaction_status" required>
+                <div class="col-sm-7">
+                  <select class="form-control" name="transaction_status" id="transaction_status" required>
                     <option value="">Select</option>
                     <option value="1">Complete</option>
                     <option value="2">Cancel</option>
                   </select>
-
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="control-label col-sm-2" for="comment">Comment:</label>
-                <div class="col-sm-10">
-                  <textarea name="comment" id="comment" rows="8" cols="80"></textarea>
+                <label class="control-label col-sm-3" for="comment">Comment:</label>
+                <div class="col-sm-7">
+                  <textarea name="comment" id="comment" rows="8" cols="65"></textarea>
                 </div>
               </div>
 
               <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-offset-3 col-sm-7">
+                  <input type="hidden" name="transaction_id" value="<?php echo $currentTransaction['id']; ?>">
                   <button type="submit" class="btn btn-default">Submit</button>
                 </div>
               </div>

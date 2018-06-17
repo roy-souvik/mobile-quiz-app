@@ -28,8 +28,11 @@
             <td> <?php echo $transaction['transaction_status']; ?> </td>
             <td> <?php echo $transaction['comment']; ?> </td>
             <td>
-              <a href="complete-bank-transaction-form.php?id=<?php echo $transaction['id']; ?>&user_id=<?php echo $transaction['user_id']; ?>" class="text-success">Complete</a> |
-              <a href="#" class="text-danger">Cancel</a>
+              <a href="complete-bank-transaction-form.php?id=<?php echo $transaction['id']; ?>&user_id=<?php echo $transaction['user_id']; ?>">
+                <span class="text-success">Complete</span>
+                /
+                <span class="text-danger">Cancel</span>
+              </a>
             </td>
           </tr>
       <?php
