@@ -14,6 +14,11 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->submitBankInformation($_REQUEST);
 		break;
 
+		case 'review_bank_account_by_admin':
+				require_once(__DIR__ . '/ADMIN/check_user_session.php');
+				$result = $userService->reviewBankAccountByAdmin($_REQUEST);
+		break;
+
 		case 'verify_bank_info':
 				$result = $userService->verifyBankInformation($_REQUEST);
 		break;

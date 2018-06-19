@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/ADMIN/user/user.model.php');
+require_once('constants.include.php');
 
 class UserService
 {
@@ -220,6 +221,57 @@ class UserService
         ];
     }
 
+    /**
+     * Admin submits an initial transaction details to review the bank account.
+     * @param  array $request
+     * @return array
+     */
+    public function reviewBankAccountByAdmin($request)
+    {
+        if (empty($request['user_id']) || empty($request['amount']) || empty($request['transaction_id'])) {
+          return [
+            'flag' => false,
+            'message' => 'Inputs are not valid.'
+          ];
+        }
+
+        $data = [
+          'user_id' => intval($this->sanitizeVariable($request['user_id'])),
+          'amount' => intval($this->sanitizeVariable($request['amount'])),
+          'transaction_id' => $this->sanitizeVariable($request['transaction_id']),
+        ];
+
+        $bankAccount = $this->findBankDetailsByUserId($data['user_id']);
+
+        $approvedstatus = BANK_ACCOUNT_ADMIN_REVIEW;
+        $updated_at = date('Y-m-d H:i:s');
+
+        $updateAccountSql = "UPDATE `{$this->userBankAccountTable}`
+        SET
+        `is_approved`= {$approvedstatus},
+        `verified_transaction_id`= '{$data['transaction_id']}',
+        `verified_amount`= '{$data['amount']}',
+        `updated_at`= '{$updated_at}'
+        WHERE id = " . $bankAccount['id'];
+
+        if ($this->connection->query($updateAccountSql)) {
+          return [
+            'flag' => true,
+            'message' => 'Admin has reviewed the bank account. Please verify the transaction details to apply for payments.'
+          ];
+        }
+
+        return [
+          'flag' => false,
+          'message' => 'There is some internal error.'
+        ];
+    }
+
+    /**
+     * User submits the transaction details done by the admin then the account gets verified
+     * @param  array $request
+     * @return array
+     */
     public function verifyBankInformation($request)
     {
       if (empty($request['user_id']) || empty($request['amount']) || empty($request['transaction_id'])) {
@@ -244,25 +296,39 @@ class UserService
         ];
       }
 
-      if (intval($bankAccount['is_approved']) === 2) {
+      if (intval($bankAccount['is_approved']) != BANK_ACCOUNT_ADMIN_REVIEW) {
+        return [
+          'flag' => false,
+          'message' => 'Admin has not yet verified your account. Please try again later.'
+        ];
+      }
+
+      if (intval($bankAccount['is_approved']) === BANK_ACCOUNT_APPROVED) {
         return [
           'flag' => true,
           'message' => 'Your account is already verified. You may apply for payment.'
         ];
       }
 
-      $approvedstatus = 2;
+      $dataMatched = $bankAccount['verified_transaction_id'] == $data['transaction_id'] && intval($bankAccount['verified_amount']) === $data['amount'];
+
+      if (!$dataMatched) {
+        return [
+          'flag' => false,
+          'message' => 'The transaction details does not matche with our records.'
+        ];
+      }
+
+      $approvedstatus = BANK_ACCOUNT_APPROVED;
       $updated_at = date('Y-m-d H:i:s');
 
-      $updateAccountSql = "UPDATE `{$this->userBankAccountTable}`
+      $approveAccountSql = "UPDATE `{$this->userBankAccountTable}`
       SET
       `is_approved`= {$approvedstatus},
-      `verified_transaction_id`= '{$data['transaction_id']}',
-      `verified_amount`= '{$data['amount']}',
       `updated_at`= '{$updated_at}'
       WHERE id = " . $bankAccount['id'];
 
-      if ($this->connection->query($updateAccountSql)) {
+      if ($this->connection->query($approveAccountSql)) {
         return [
           'flag' => true,
           'message' => 'Successfully verified your bank information. You may now apply for payments.'
