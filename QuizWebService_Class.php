@@ -88,7 +88,8 @@ function registration($req)
           $dest_file = "IMAGE/USER/".$new_image_name;
           $upload_image = file_put_contents($dest_file, $user_image);
 
-          $insert_user = "INSERT INTO tbl_user (promoter_id, user_name, user_email, user_social_no, user_phone_no, user_paytm, user_bank, user_bank_ac, user_bank_ifsc, user_image) VALUES ('$promoter_id', '$user_name', '$user_email', '$user_social_no', '$user_phone_no', '$user_paytm', '$user_bank', '$user_bank_ac', '$user_bank_ifsc', '$new_image_name')";
+          $insert_user = "INSERT INTO tbl_user (promoter_id, user_name, user_email, user_social_no, user_phone_no, user_paytm, user_bank, user_bank_ac, user_bank_ifsc, user_image, user_point, 	user_last_question, user_active, user_delete) VALUES ('$promoter_id', '$user_name', '$user_email', '$user_social_no', '$user_phone_no', '$user_paytm', '$user_bank', '$user_bank_ac', '$user_bank_ifsc', '$new_image_name', 0, 0, 1, 0)";
+
           $insert_user_result = $conn->query($insert_user);
 
           if ($insert_user_result)

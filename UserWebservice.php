@@ -39,6 +39,11 @@ switch((string) $_REQUEST['req']) {
 				$result = $userService->getPaymentList(intval($_REQUEST['user_id']));
 		break;
 
+		case 'approve_mobile_recharge':
+				require_once(__DIR__ . '/ADMIN/check_user_session.php');
+				$result = $userService->approveMobileRecharge($_REQUEST);
+		break;
+
 		default:
 				$result = [
 					'flag' => false,

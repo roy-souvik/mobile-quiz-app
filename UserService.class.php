@@ -37,10 +37,10 @@ class UserService
     {
       $host = "localhost";
       $dbname = "quiz_competition";
-      $username = "root";
-      $password = "password";
-      // $username = "ntss";
-      // $password = "eerning";
+      // $username = "root";
+      // $password = "password";
+      $username = "ntss";
+      $password = "eerning";
 
       $connect = new mysqli($host, $username, $password, $dbname);
       if ($connect->connect_error) {
@@ -666,7 +666,36 @@ class UserService
       WHERE id = " . $data['transaction_id'];
 
       return $this->connection->query($updateTransactionSql);
+    }
 
+    public function approveMobileRecharge($request)
+    {
+        $data = [
+          'transaction_id' => intval($this->sanitizeVariable($request['transaction_id'])),
+          'comment' => $this->sanitizeVariable($request['comment'])
+        ];
+
+        $approvedstatus = 'done';
+        $updated_at = date('Y-m-d');
+
+        $updateSql = "UPDATE `{$this->mobileTransactionsTable}`
+        SET
+        `transaction_action_date`= '{$updated_at}',
+        `comment`= '{$data['comment']}',
+        `transaction_status`= '{$approvedstatus}'
+        WHERE transaction_id = " . $data['transaction_id'] . ' LIMIT 1';
+
+        if ($this->connection->query($updateSql)) {
+          return [
+            'flag' => true,
+            'message' => 'Mobile recharge is done.'
+          ];
+        }
+
+        return [
+          'flag' => false,
+          'message' => 'There is some internal error.'
+        ];
     }
 
 }

@@ -14,6 +14,7 @@
           <th>Amount</th>
           <th>Status</th>
           <th>Comment</th>
+          <th>Action</th>
         </tr>
 
         <?php
@@ -28,6 +29,12 @@
             <td> <?php echo $transaction['transaction_request_amount']; ?> </td>
             <td> <?php echo $transaction['transaction_status']; ?> </td>
             <td> <?php echo $transaction['comment']; ?> </td>
+            <td>
+              <a href="javascript:void(0);" class="approve-mobile-recharge"
+               data-transactionId="<?php echo $transaction['transaction_id']; ?>">
+                <span class="text-success">Complete</span>
+              </a>
+            </td>
           </tr>
       <?php
           }

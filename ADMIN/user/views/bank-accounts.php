@@ -31,7 +31,7 @@
             <td> <?php echo $bankAccount['updated_at']; ?> </td>
             <td> <?php echo $bankAccount['created_at']; ?> </td>
             <td>
-              <a href="javascript:void(0);" id="review-account"
+              <a href="javascript:void(0);" class="review-account"
                data-userId="<?php echo $userService->user->id; ?>">
                 <span class="text-success">Review Account</span>
               </a>
