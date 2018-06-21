@@ -12,3 +12,7 @@ define('MINIMUM_AMOUNT_FOR_REQUEST', 500);
 // Score
 define('SCORE_BLOCK', 1000);
 define('AMOUNT_BLOCK', 50);
+
+define('WATCHED_VIDEO_STATE', 2);
+define('CORRECT_ANSWER_STATE', 1);
+define('WRONG_ANSWER_STATE', 0);
