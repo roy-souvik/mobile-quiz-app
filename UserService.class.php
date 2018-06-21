@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/ADMIN/user/user.model.php');
 require_once('constants.include.php');
+require_once('helpers.include.php');
 
 class UserService
 {
@@ -10,7 +11,7 @@ class UserService
     public $userBankTransactionsTable;
     public $mobileTransactionsTable;
     public $userScoresTable;
-    private $daysToRequestBankTransaction = 30;
+    private $daysToRequestBankTransaction = DAYS_TO_REQUEST_BANK_TRANSACTION;
     public $user;
 
     public function __construct($userId = null)
@@ -37,10 +38,10 @@ class UserService
     {
       $host = "localhost";
       $dbname = "quiz_competition";
-      // $username = "root";
-      // $password = "password";
-      $username = "ntss";
-      $password = "eerning";
+      $username = "root";
+      $password = "password";
+      // $username = "ntss";
+      // $password = "eerning";
 
       $connect = new mysqli($host, $username, $password, $dbname);
       if ($connect->connect_error) {
@@ -360,6 +361,13 @@ class UserService
         'amount' => intval($this->sanitizeVariable($request['amount']))
       ];
 
+      if (!$this->isRequestedAfterSpecifiedEarning()) {
+        return [
+          'flag' => false,
+          'message' => 'Sorry!. You can request for payment after an earning of Rs. ' . MINIMUM_AMOUNT_FOR_REQUEST
+        ];
+      }
+
       if (! $this->isRequestedAfterSpecificDays(intval($data['user_id']))) {
         return [
           'flag' => false,
@@ -386,6 +394,13 @@ class UserService
       ];
     }
 
+    private function isRequestedAfterSpecifiedEarning()
+    {
+        $totalEarning = scoreToRupees(intval($this->user->point));
+
+        return $totalEarning >= MINIMUM_AMOUNT_FOR_REQUEST;
+    }
+
     private function isRequestedAfterSpecificDays($userId)
     {
         $sql = "SELECT * FROM `{$this->userBankTransactionsTable}`
@@ -408,6 +423,7 @@ class UserService
         return false;
     }
 
+    // TODO: should be in helpers file
     public function getDays($startDate, $endDate)
     {
         $date1 = date_create($startDate);
@@ -417,11 +433,6 @@ class UserService
         $diff = date_diff($date1, $date2);
 
         return $diff->format("%a");
-    }
-
-    public function convertDateToTimestamp($format = 'Y-m-d H:i:s', $date)
-    {
-        return DateTime::createFromFormat($format, $date)->getTimestamp();
     }
 
     public function getAllUsers()
@@ -610,11 +621,14 @@ class UserService
 
         return [
           'flag' => true,
-          'message' => 'Score Details',
+          'message' => 'Score & Earning Details',
           'bank_status' => intval($bankDetails['is_approved']),
           'todays_score' => $todaysScore,
-          'months_score' => $monthsScore,
-          'total_score' => $totalScore
+          'months_score' => $monthsScore - $todaysScore,
+          'total_score' => $totalScore - ($monthsScore + $todaysScore),
+          'todays_earning' => scoreToRupees($todaysScore),
+          'months_earning' => scoreToRupees($monthsScore - $todaysScore),
+          'total_earning' => scoreToRupees($totalScore - ($monthsScore + $todaysScore))
         ];
     }
 
