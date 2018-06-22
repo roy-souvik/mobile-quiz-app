@@ -590,6 +590,7 @@ class UserService
         $totalScore = 0;
         $todaysScore = 0;
         $monthsScore = 0;
+
         while($score = $query->fetch_assoc()) {
           $watchedVideo = $score['score_category'] == 2;
           $answeredCorrectly = $score['score_category'] == 1 && $score['answer_matched'] == 1;
@@ -600,21 +601,27 @@ class UserService
           $scoredInCurrentMonth = date('m') == $scoreMonth;
           $currentScore = intval($score['score']);
 
-          if ($answeredCorrectly || $watchedVideo) {
+          // Calculate total score
+          if (($answeredCorrectly || $watchedVideo) && !$scoredToday && !$scoredInCurrentMonth) {
             $totalScore += $currentScore;
-          }  else if ($answeredWrongly) {
+          }  else if ($answeredWrongly && !$scoredToday && !$scoredInCurrentMonth) {
             $totalScore -= $currentScore;
           }
 
+          // Calculate today's score
           if (($scoredToday && $answeredCorrectly) || ($scoredToday && $watchedVideo)) {
             $todaysScore += $currentScore;
           } else if ($scoredToday && $answeredWrongly) {
             $todaysScore -= $currentScore;
           }
 
-          if (($scoredInCurrentMonth && $answeredCorrectly) || ($scoredInCurrentMonth && $watchedVideo)) {
+          // Calculate current month's score
+          if (
+            (($scoredInCurrentMonth && $answeredCorrectly) ||
+            ($scoredInCurrentMonth && $watchedVideo)) && !$scoredToday
+          ) {
             $monthsScore += $currentScore;
-          } else if ($scoredInCurrentMonth && $answeredWrongly) {
+          } else if ($scoredInCurrentMonth && $answeredWrongly && !$scoredToday) {
             $monthsScore -= $currentScore;
           }
         }
@@ -624,11 +631,11 @@ class UserService
           'message' => 'Score & Earning Details',
           'bank_status' => intval($bankDetails['is_approved']),
           'todays_score' => $todaysScore,
-          'months_score' => $monthsScore - $todaysScore,
-          'total_score' => $totalScore - ($monthsScore + $todaysScore),
+          'months_score' => $monthsScore,
+          'total_score' => $totalScore,
           'todays_earning' => scoreToRupees($todaysScore),
-          'months_earning' => scoreToRupees($monthsScore - $todaysScore),
-          'total_earning' => scoreToRupees($totalScore - ($monthsScore + $todaysScore))
+          'months_earning' => scoreToRupees($monthsScore),
+          'total_earning' => scoreToRupees($totalScore)
         ];
     }
 
