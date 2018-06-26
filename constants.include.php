@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Kolkata');
 
 // Bank Account Statuses
 define('BANK_ACCOUNT_DO_NOT_EXIST', 0);

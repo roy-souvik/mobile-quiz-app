@@ -1,7 +1,7 @@
 <?php
-date_default_timezone_set('America/New_York');
-class PromoterWebservice
+require_once('constants.include.php');
 
+class PromoterWebservice
 {
 /*============================ DB CONNECTION ===========================*/
      function dbconnenct()
@@ -42,7 +42,7 @@ function log_in($req)
 
       if($promoter_email!="" || $promoter_pass!="")//CHECKING promoter E-MAIL FIELD BLANK OR NOT.
       {
-        
+
 
         $availability_chk_sql = "SELECT * FROM `tbl_promoter` WHERE `promoter_email`='".$promoter_email."' AND `promoter_pass`='".$promoter_pass."'";
         $availability_result = $conn->query($availability_chk_sql);
@@ -68,13 +68,13 @@ function log_in($req)
             $promoter['login']["message"]="Successfully Logged in.";
             $promoter['login']["promoter_details"]=$login_data_row;
 
-            
+
           }
           else
           {
             $promoter['login']["flag"]="false";
             $promoter['login']["message"]="The account is deactivated.";
-          }         
+          }
 
         }
         else
@@ -113,10 +113,10 @@ function user_list($req)
     {
 
       $promoter_email = mysqli_real_escape_string($conn,trim($req['promoter_email']));
-      
+
       if($promoter_email!="")//CHECKING promoter E-MAIL FIELD BLANK OR NOT.
       {
-        
+
 
         $availability_chk_sql = "SELECT * FROM `tbl_promoter` WHERE `promoter_email`='".$promoter_email."'";
         $availability_result = $conn->query($availability_chk_sql);
@@ -137,23 +137,23 @@ function user_list($req)
               //$user_name      = $user_list['user_name'];
               $user_point     = $user_list['user_point'];
               $promoter_point = $user_point*10/100;
-              $total_point = $total_point+$promoter_point; 
+              $total_point = $total_point+$promoter_point;
 
-              $promoter['user_list']["flag"]="true";              
+              $promoter['user_list']["flag"]="true";
               $promoter['user_list']["message"]="All user found..";
               $promoter['user_list']["total_amount"]= (string)($total_point*0.10);
               $promoter['user_list']['users'][$i]['user_name'] = $user_list['user_name'];
               $promoter['user_list']['users'][$i]['user_point'] = $user_list['user_point'];
-              $promoter['user_list']['users'][$i]['promoter_point'] = (string)$promoter_point;               
+              $promoter['user_list']['users'][$i]['promoter_point'] = (string)$promoter_point;
               $i++;
             }
-            
+
           }
           else
           {
             $promoter['user_list']["flag"]="false";
             $promoter['user_list']["message"]="The account is deactivated.";
-          }         
+          }
 
         }
         else
