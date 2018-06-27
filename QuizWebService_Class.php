@@ -1357,11 +1357,12 @@ return $quiz['details'];
   {
       $scoreTable = 'tbl_user_scores';
       $connection = $this->dbconnenct();
+      $currentTime = date('Y-m-d H:i:s');
 
       if ($scoreCategoryId === $this->questionCategoryId) {
         $sql = "INSERT INTO `{$scoreTable}` (
-          `user_id`, `score_category`, `question_id`, `score`, `ans_string`, `answer_matched`, `question_language`)
-           VALUES ('{$data['user_id']}', '{$scoreCategoryId}', '{$data['question_id']}', '{$data['score']}', '{$data['ans_string']}', '{$data['answer_matched']}', '{$data['question_language']}')";
+          `user_id`, `score_category`, `question_id`, `score`, `ans_string`, `answer_matched`, `question_language`, `created_at`)
+           VALUES ('{$data['user_id']}', '{$scoreCategoryId}', '{$data['question_id']}', '{$data['score']}', '{$data['ans_string']}', '{$data['answer_matched']}', '{$data['question_language']}', '{$currentTime}')";
       }
 
       if ($scoreCategoryId === $this->videoCategoryId) {

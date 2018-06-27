@@ -1,3 +1,2 @@
 <?php
-
-die('Sorry you need admin credentials to login..');
+  die('Sorry you need admin credentials to login..');
